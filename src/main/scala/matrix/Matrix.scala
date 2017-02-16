@@ -48,7 +48,7 @@ class Matrix(val m: Int, val n: Int) {
     c
   }
 
-  def array: Array[Double] = matrixArray
+  def array: Array[Double] = matrixArray.clone
 
   def *(that: Matrix): Matrix = {
     assert(this.n == that.m, s"size mismatch for matrix multiplication, left operand is ${this.m}x${this.n} " +
