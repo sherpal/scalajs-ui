@@ -51,8 +51,10 @@ class Matrix(val m: Int, val n: Int) {
   def array: Array[Double] = matrixArray.clone
 
   def *(that: Matrix): Matrix = {
-    assert(this.n == that.m, s"size mismatch for matrix multiplication, left operand is ${this.m}x${this.n} " +
-    s"right operand is ${that.m}x${that.n}")
+    if (scala.scalajs.LinkingInfo.developmentMode) {
+      assert(this.n == that.m, s"size mismatch for matrix multiplication, left operand is ${this.m}x${this.n} " +
+        s"right operand is ${that.m}x${that.n}")
+    }
     val mult = new Matrix(this.m, that.n)
 
     for {
