@@ -34,6 +34,9 @@ package gui
  */
 class StatusBar(n: String, par: Option[Frame] = Some(UIParent)) extends Frame(n, par) with ValueBar {
 
+  def this(parent: Frame) = this("", Some(parent))
+  def this() = this("", Some(UIParent))
+
   private var _reverseFill: Boolean = false
 
   /**

@@ -27,7 +27,7 @@
 
 package webglgraphics
 
-import Matrix.Matrix
+import matrix.Matrix
 import complex.Complex
 import org.scalajs.dom
 import org.scalajs.dom.html
@@ -271,12 +271,18 @@ class Canvas(val canvas: html.Canvas, gl: WebGLRenderingContext) extends CustomC
 
   // we go from cartesian coordinates ((0,0) is at the center of the canvas and y go up) to canvas coordinates
   // ((0,0) at bottom left corner and y go up)
-  def setScissor(x: Double, y: Double, width: Double, height: Double): Unit = {
+//  def setScissor(x: Double, y: Double, width: Double, height: Double): Unit = {
+//    gl.enable(WebGLRenderingContext.SCISSOR_TEST)
+//    gl.scissor((x + canvas.width / 2).toInt, (y + canvas.height / 2).toInt, width.toInt, height.toInt)
+//  }
+//  def setScissor(): Unit =
+//    gl.disable(WebGLRenderingContext.SCISSOR_TEST)
+
+  def withScissor[A](x: Double, y: Double, width: Double, height: Double)(body: => A): A = {
     gl.enable(WebGLRenderingContext.SCISSOR_TEST)
     gl.scissor((x + canvas.width / 2).toInt, (y + canvas.height / 2).toInt, width.toInt, height.toInt)
+    try body finally gl.disable(WebGLRenderingContext.SCISSOR_TEST)
   }
-  def setScissor(): Unit =
-    gl.disable(WebGLRenderingContext.SCISSOR_TEST)
 
 
   private val rectangleVertexCode =
@@ -382,9 +388,9 @@ class Canvas(val canvas: html.Canvas, gl: WebGLRenderingContext) extends CustomC
   def drawEllipse(center: Complex, xRadius: Double, yRadius: Double, rotation: Double = 0, color: Vec4 = Vec4(1,1,1,1),
                   segments: Int = 20, fill: Boolean = true): Unit = {
     val vertices = (for (j <- 0 to segments) yield
-      center + xRadius * math.cos(j * 2 * math.Pi / segments) + Complex.i * (
+      center + (xRadius * math.cos(j * 2 * math.Pi / segments) + Complex.i * (
         yRadius * math.sin(j * 2 * math.Pi / segments)
-        )).toVector
+        )) * Complex.rotation(rotation)).toVector
     drawVertices(vertices, color, if (fill) "fill" else "line")
   }
 
@@ -608,8 +614,8 @@ class Canvas(val canvas: html.Canvas, gl: WebGLRenderingContext) extends CustomC
 
 
   def clear(): Unit = {
-    setColor()
-    setScissor()
+//    setColor()
+    //   setScissor()
 
     gl.enable(WebGLRenderingContext.BLEND)
     gl.blendFunc(WebGLRenderingContext.SRC_ALPHA, WebGLRenderingContext.ONE_MINUS_SRC_ALPHA)

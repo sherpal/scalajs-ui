@@ -102,33 +102,34 @@ class Texture(n: String = "", p: Frame) extends LayeredRegion {
   def removeImage(): Unit = _texture = None
 
 
+
   def draw(): Unit = if (isVisible) {
-    Engine.painter.setColor(_red, _green, _blue, getEffectiveAlpha)
+    def rawDraw(): Unit = {
+      _texture match {
+        case Some(tex) =>
+          _quad match {
+            case Some(quad) => Engine.painter.drawTextureQuad(tex, quad, Complex(left, top), width, height)
+            case None => Engine.painter.drawTexture(tex, Complex(left, top), width, height)
+          }
 
-    _scrollFrameAncestor match {
-      case Some(scrollFrame) =>
-        Engine.painter.setScissor(scrollFrame.left.toInt, scrollFrame.bottom.toInt,
-          scrollFrame.width.toInt, scrollFrame.height.toInt)
-      case _ =>
+        case _ =>
+          if (isRectangle) {
+            Engine.painter.drawRectangle(Complex(left, top), width, height, fill = mode == FillMode)
+          } else if (isDisk) {
+            Engine.painter.drawDisk(center, radius)
+          }
+      }
     }
 
-    _texture match {
-      case Some(tex) =>
-        _quad match {
-          case Some(quad) => Engine.painter.drawTextureQuad(tex, quad, Complex(left, top), width, height)
-          case None => Engine.painter.drawTexture(tex, Complex(left, top), width, height)
-        }
-
-      case _ =>
-        if (isRectangle) {
-          Engine.painter.drawRectangle(Complex(left, top), width, height, fill = mode == FillMode)
-        } else if (isDisk) {
-          Engine.painter.drawDisk(center, radius)
-        }
-    }
-
-    if (_scrollFrameAncestor.isDefined)
-      Engine.painter.setScissor()
+    Engine.painter.withColor(_red, _green, _blue, getEffectiveAlpha)({
+      _scrollFrameAncestor match {
+        case Some(scrollFrame) =>
+          Engine.painter.withScissor(scrollFrame.left.toInt, scrollFrame.bottom.toInt,
+            scrollFrame.width.toInt, scrollFrame.height.toInt)(rawDraw())
+        case _ =>
+          rawDraw()
+      }
+    })
   }
 }
 

@@ -85,6 +85,8 @@ object Complex {
 
   def cos(z: Complex): Complex = (exp(i * z) + exp(-i * z)) / 2
 
+  def rotation(angle: Double): Complex = Complex(math.cos(angle), math.sin(angle))
+
   implicit object ComplexIsNumeric extends Numeric[Complex] {
     override def plus(x: Complex, y: Complex): Complex = x + y
 

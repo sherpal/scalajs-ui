@@ -32,6 +32,9 @@ import scala.collection.mutable
 
 class ScrollFrame(n: String = "", parent: Option[Frame] = Some(UIParent)) extends Frame(n, parent) {
 
+  def this(parent: Frame) = this("", Some(parent))
+  def this() = this("", Some(UIParent))
+
 
   private var _horizontalScroll: Double = 0
 

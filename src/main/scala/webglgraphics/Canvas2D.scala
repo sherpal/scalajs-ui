@@ -27,7 +27,7 @@
 
 package webglgraphics
 
-import Matrix.Matrix
+import matrix.Matrix
 import complex.Complex
 import org.scalajs.dom
 import org.scalajs.dom.html
@@ -57,7 +57,7 @@ class Canvas2D(val canvas: html.Canvas, ctx: CanvasRenderingContext2D) extends C
   private def changeCoordinates(z: Complex): (Double, Double) = (z.re + canvas.width / 2, canvas.height / 2 - z.im)
 
   /**
-   * Sets a rectangle area that restrain the drawing area.
+   * Sets a rectangle area that restrain the drawing area and apply body instructions.
    * We go from cartesian coordinates ((0,0) is at the center of the canvas and y go up) to canvas coordinates
    * ((0,0) at the top left and y go down).
    *
@@ -65,18 +65,16 @@ class Canvas2D(val canvas: html.Canvas, ctx: CanvasRenderingContext2D) extends C
    * @param y      top pixel of area.
    * @param width  width of area, in pixels.
    * @param height height of area, in pixels.
+   * @param body   chunk of code to execute while using this particular scissor.
    */
-  def setScissor(x: Double, y: Double, width: Double, height: Double): Unit = {
-    val (locX, locY) = changeCoordinates(Complex(x, y + height))//x + Complex.i * (y + height))
+  def withScissor[A](x: Double, y: Double, width: Double, height: Double)(body: => A): A = {
     ctx.save()
     ctx.beginPath()
+    val (locX, locY) = changeCoordinates(Complex(x, y + height))
     ctx.rect(locX, locY, width, height)
     ctx.clip()
+    try body finally ctx.restore()
   }
-
-  /** Removes the scissor area */
-  def setScissor(): Unit =
-    ctx.restore()
 
   def drawRectangle(z: Complex, width: Double, height: Double, color: Vec4 = Vec4(1.0, 1.0, 1.0, 1.0),
                     fill: Boolean = true): Unit = {
@@ -111,9 +109,9 @@ class Canvas2D(val canvas: html.Canvas, ctx: CanvasRenderingContext2D) extends C
   def drawEllipse(center: Complex, xRadius: Double, yRadius: Double, rotation: Double = 0, color: Vec4 = Vec4(1,1,1,1),
                   segments: Int = 20, fill: Boolean = true): Unit = {
     val vertices = (for (j <- 0 to segments) yield
-      center + xRadius * math.cos(j * 2 * math.Pi / segments) + Complex.i * (
+      center + (xRadius * math.cos(j * 2 * math.Pi / segments) + Complex.i * (
         yRadius * math.sin(j * 2 * math.Pi / segments)
-        )).toVector
+        )) * Complex.rotation(rotation)).toVector
     drawVertices(vertices, color, if (fill) "fill" else "line")
   }
 
@@ -196,7 +194,6 @@ class Canvas2D(val canvas: html.Canvas, ctx: CanvasRenderingContext2D) extends C
 
 
   def clear(): Unit = {
-    setScissor()
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     ctx.fillStyle = backgroundColor.toCSSColor
     ctx.fillRect(0, 0, canvas.width, canvas.height)

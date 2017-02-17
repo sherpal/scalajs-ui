@@ -73,13 +73,17 @@ trait CustomCanvas {
 
   private var _drawingColor: Vec4 = Vec4(1,1,1,1)
   def drawingColor: Vec4 = _drawingColor
-  def setColor(): Unit = _drawingColor = Vec4(1,1,1,1)
-  def setColor(v: Vec4): Unit = _drawingColor = v
-  def setColor(r: Double, g: Double, b: Double, a: Double = 1.0): Unit = _drawingColor = Vec4(r, g, b, a)
 
+  def withColor[A](v: Vec4)(body: => A): A = {
+    val previousColor = drawingColor
+    _drawingColor = v
+    try body finally _drawingColor = previousColor
+  }
 
-  def setScissor(x: Double, y: Double, width: Double, height: Double): Unit
-  def setScissor(): Unit
+  /**
+   * Executes body with scissor set to rectangle of bottom left corner x+iy.
+   */
+  def withScissor[A](x: Double, y: Double, width: Double, height: Double)(body: => A): A
 
   /**
    * Draws a rectangle of the given color.
@@ -100,7 +104,7 @@ trait CustomCanvas {
    *
    * @param center   the center of the disk, in pixels.
    * @param radius   the radius of the disk, in pixels.
-   * @param color    css color of the region to draw.
+   * @param color    color of the region to draw in rgba, in [0,1].
    * @param segments number of segments used to draw the circle. Meaningless for [[Canvas2D]].
    * @param fill     whether the region should be filled.
    */

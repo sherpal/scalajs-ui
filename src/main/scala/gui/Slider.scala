@@ -35,6 +35,9 @@ import complex.Complex
  */
 class Slider(n: String = "", par: Option[Frame] = Some(UIParent)) extends Frame(n, par) with ValueBar {
 
+  def this(parent: Frame) = this("", Some(parent))
+  def this() = this("", Some(UIParent))
+
   private var _thumbLength: Double = 20
 
   /** Returns the length the thumb should have. */

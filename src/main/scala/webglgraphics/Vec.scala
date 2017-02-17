@@ -62,7 +62,7 @@ case class Vec4(x1: Double, x2: Double, x3: Double, x4: Double) extends Vec {
 
   def toList: List[Double] = List(x1, x2, x3, x4)
 
-  def toCSSColor: String = s"rgba(${(x1 * 255).toInt},${(x2 * 255).toInt},${(x3 * 255).toInt},$x4"
+  def toCSSColor: String = s"rgba(${(x1 * 255).toInt},${(x2 * 255).toInt},${(x3 * 255).toInt},$x4)"
 }
 
 

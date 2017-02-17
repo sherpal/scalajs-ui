@@ -33,6 +33,10 @@ import webglgraphics.Canvas2D
 
 
 class Button(n: String = "", par: Option[Frame] = Some(UIParent)) extends Frame(n, par) with Focusable with Textable {
+
+  def this(parent: Frame) = this("", Some(parent))
+  def this() = this("", Some(UIParent))
+
   private var _state: ButtonState = Normal
 
   private val _text: FontString = createFontString(name + "text")
@@ -197,29 +201,28 @@ object Button {
 
         val (red, green, blue, alpha) = normalTex.vertexColor
 
-        Engine.painter.setCanvas(canvas)
+        Engine.painter.withCanvases(canvas)({
+          Engine.painter.withColor(red * 2.0 / 3, green * 2.0 / 3, blue * 2.0 / 3, alpha * 2.0 / 3)({
+            normalTex.texture match {
+              case Some(tex) =>
+                val (width, height) = normalTex.size
+                normalTex.quad match {
+                  case Some(quad) =>
+                    Engine.painter.drawTextureQuad(tex, quad, -width / 2 + Complex.i * height / 2, width, height)
+                  case None =>
+                    Engine.painter.drawTexture(tex, Complex(-width / 2, height / 2 - 2), width, height)
+                }
 
-        Engine.painter.setColor(red * 2.0 / 3, green * 2.0 / 3, blue * 2.0 / 3, alpha * 2.0 / 3)
-
-        normalTex.texture match {
-          case Some(tex) =>
-            val (width, height) = normalTex.size
-            normalTex.quad match {
-              case Some(quad) =>
-                Engine.painter.drawTextureQuad(tex, quad, -width/2 + Complex.i * height / 2, width, height)
               case None =>
-                Engine.painter.drawTexture(tex, Complex(-width / 2, height / 2 - 2), width, height)
+                if (normalTex.isRectangle) {
+                  Engine.painter.drawRectangle(-normalTex.width / 2 + (normalTex.height / 2 - 2) * Complex.i,
+                    normalTex.width, normalTex.height)
+                } else if (normalTex.isDisk) {
+                  Engine.painter.drawDisk(0, normalTex.radius)
+                }
             }
-
-          case None =>
-            if (normalTex.isRectangle) {
-              Engine.painter.drawRectangle(- normalTex.width / 2 + (normalTex.height / 2 - 2) * Complex.i,
-                normalTex.width, normalTex.height)
-            } else if (normalTex.isDisk) {
-              Engine.painter.drawDisk(0, normalTex.radius)
-            }
-        }
-        Engine.painter.setCanvas()
+          })
+        })
 
         pushedTex.setTexture(canvas.canvas)
         pushedTex

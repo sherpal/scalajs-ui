@@ -41,14 +41,14 @@ class Painter(val canvas: html.Canvas, val ctx: CanvasRenderingContext2D) {//val
 
   private var currentCanvases: List[CustomCanvas] = List(renderingCanvas)
 
-  def setCanvas(c: CustomCanvas): Unit =
-    currentCanvases = List(c)
-
-  def setCanvas(cs: List[CustomCanvas]): Unit =
+  def withCanvases(cs: List[CustomCanvas])(body: => Unit): Unit = {
+    val prevList = currentCanvases
     currentCanvases = cs
+    try body finally currentCanvases = prevList
+  }
 
-  def setCanvas(): Unit =
-    setCanvas(renderingCanvas)
+  def withCanvases(c: CustomCanvas)(body: => Unit): Unit =
+    withCanvases(List(c))(body)
 
   def dimensions: (Int, Int) = (canvas.width, canvas.height)
 
@@ -75,23 +75,21 @@ class Painter(val canvas: html.Canvas, val ctx: CanvasRenderingContext2D) {//val
   def setBackgroundColor(r: Double, g: Double, b: Double): Unit = currentCanvases.foreach(_.setBackgroundColor(r, g, b))
 
   def drawingColor: Vec4 = renderingCanvas.drawingColor
-  def setColor(): Unit = currentCanvases.foreach(_.setColor())
-  def setColor(v: Vec4): Unit = currentCanvases.foreach(_.setColor(v))
-  def setColor(r: Double, g: Double, b: Double, a: Double = 1.0): Unit = currentCanvases.foreach(_.setColor(r,g,b,a))
 
-  // we go from cartesian coordinates ((0,0) is at the center of the canvas and y go up) to canvas coordinates
-  // ((0,0) at bottom left corner and y go up)
-  def setScissor(x: Int, y: Int, width: Int, height: Int): Unit =
-    currentCanvases.foreach(_.setScissor(x, y, width, height))
-  def setScissor(): Unit =
-    currentCanvases.foreach(_.setScissor())
+  def withColor(v: Vec4)(body: => Unit): Unit =
+    currentCanvases.foreach(_.withColor(v)(body))
+  def withColor(r: Double, g: Double, b: Double, alpha: Double = 1)(body: => Unit): Unit =
+    withColor(Vec4(r,g,b,alpha))(body)
+
+  def withScissor(x: Double, y: Double, width: Double, height: Double)(body: => Unit): Unit =
+    currentCanvases.foreach(_.withScissor(x, y, width, height)(body))
 
   def drawRectangle(z: Complex, width: Double, height: Double, color: Vec4 = Vec4(1.0, 1.0, 1.0, 1.0),
                     fill: Boolean = true): Unit =
     currentCanvases.foreach(_.drawRectangle(z, width, height, color, fill))
 
   def drawLine(vertices: Seq[Complex], color: Vec4 = Vec4(1,1,1,1), lineWidth: Int = 5): Unit =
-    currentCanvases.foreach(_.drawLine(vertices, color * drawingColor, lineWidth))
+    currentCanvases.foreach(_.drawLine(vertices, color, lineWidth))
 
   def drawDisk(center: Complex, radius: Double, color: Vec4 = Vec4(1,1,1,1), segments: Int = 20): Unit =
     currentCanvases.foreach(_.drawDisk(center, radius, color, segments))

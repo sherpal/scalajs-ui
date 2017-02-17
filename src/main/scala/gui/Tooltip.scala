@@ -36,6 +36,9 @@ import scala.scalajs.js.timers._
 
 class Tooltip(n: String, par: Option[Frame]) extends Frame(n, par) {
 
+  def this(parent: Frame) = this("", Some(parent))
+  def this() = this("", Some(UIParent))
+
 
   private var lines: List[(FontString, Option[FontString])] = List()
 

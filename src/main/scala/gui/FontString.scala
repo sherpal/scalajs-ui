@@ -31,6 +31,7 @@ import complex.Complex
 import gameengine.Engine
 import org.scalajs.dom
 import org.scalajs.dom.raw.{CanvasRenderingContext2D, HTMLCanvasElement}
+import webglgraphics.Vec4
 
 
 class FontString(n: String, parent: Frame) extends LayeredRegion with FontInstance with Textable {
@@ -120,8 +121,6 @@ class FontString(n: String, parent: Frame) extends LayeredRegion with FontInstan
 
   /** Draw the FontString if it's not in password mode. */
   private def normalDraw(): Unit = {
-    Engine.painter.setColor(1, 1, 1, getEffectiveAlpha)
-
     drawInfo.allLines.foreach((lineInfo: LineInfo) => {
       Engine.painter.print(
         lineInfo.texts, Complex(left, top),
@@ -138,25 +137,25 @@ class FontString(n: String, parent: Frame) extends LayeredRegion with FontInstan
       case JustifyRight => (width, "right")
     }
 
-    Engine.painter.setColor(_red, _green, _blue, getEffectiveAlpha)
     Engine.painter.print("*" * _text.length, Complex(left, center._2), width, height, xOffset, 0,
-      font, jH, baseline, "rgb(1,1,1)", 1)
+      font, jH, baseline, Vec4(_red, _green, _blue, getEffectiveAlpha).toCSSColor, 1)
   }
 
   /** Draws the FontString, according to its mode and possible [[ScrollFrame]] ancestor. */
   def draw(): Unit = if (isVisible) {
     makeDrawInfo()
 
-    _scrollFrameAncestor match {
-      case Some(scrollFrame) if scrollFrame.amIVisible(this) =>
-        Engine.painter.setScissor(scrollFrame.left.toInt, scrollFrame.bottom.toInt,
-          scrollFrame.width.toInt, scrollFrame.height.toInt)
-        if (_password) passwordDraw() else normalDraw()
-      case _ =>
-        if (_password) passwordDraw() else normalDraw()
-    }
-
-    Engine.painter.setScissor()
+    Engine.painter.withColor(1,1,1)({
+      _scrollFrameAncestor match {
+        case Some(scrollFrame) =>
+          Engine.painter.withScissor(scrollFrame.left.toInt, scrollFrame.bottom.toInt,
+            scrollFrame.width.toInt, scrollFrame.height.toInt)(
+            if (_password) passwordDraw() else normalDraw()
+          )
+        case _ =>
+          if (_password) passwordDraw() else normalDraw()
+      }
+    })
   }
 
 

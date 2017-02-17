@@ -36,6 +36,10 @@ import scala.util.matching.Regex
 class EditBox(n: String = "", parent: Option[Frame] = Some(UIParent)) extends Frame(n, parent)
   with Focusable with Textable {
 
+  def this(parent: Frame) = this("", Some(parent))
+  def this() = this("", Some(UIParent))
+
+
   /// Managing attached FontString
   private val fontString: FontString = createFontString()
   fontString.setAllPoints()
