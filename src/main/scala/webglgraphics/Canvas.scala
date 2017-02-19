@@ -40,6 +40,8 @@ import scala.scalajs.js.typedarray.Float32Array
  * Canvas objects are use to draw stuff on them.
  * The [[html.Canvas]] element created in the html file for actually printing on the screen.
  * This class uses the webgl technology to draw on the canvas.
+ *
+ * /!\ This is currently abandoned and does not work correctly.
  */
 class Canvas(val canvas: html.Canvas, gl: WebGLRenderingContext) extends CustomCanvas {
 
@@ -360,7 +362,7 @@ class Canvas(val canvas: html.Canvas, gl: WebGLRenderingContext) extends CustomC
   private val rectVertexBuffer: WebGLBuffer = gl.createBuffer()
 
   def drawRectangle(z: Complex, width: Double, height: Double, color: Vec4 = Vec4(1.0, 1.0, 1.0, 1.0),
-                    fill: Boolean = true): Unit = {
+                    lineWidth: Int = 0): Unit = {
     useProgram(rectShaderProgram)
     gl.bindBuffer(WebGLRenderingContext.ARRAY_BUFFER, rectVertexBuffer)
     gl.bufferData(WebGLRenderingContext.ARRAY_BUFFER, rectCoordinates, WebGLRenderingContext.STATIC_DRAW)
@@ -376,28 +378,28 @@ class Canvas(val canvas: html.Canvas, gl: WebGLRenderingContext) extends CustomC
   }
 
   def drawDisk(center: Complex, radius: Double, color: Vec4 = Vec4(1,1,1,1),
-               segments: Int = 20, fill: Boolean = true): Unit = {
+               segments: Int = 20, lineWidth: Int = 0): Unit = {
     val vertices = (0 until segments).flatMap(j => List(
       center,
       center + radius * Complex.exp(i * 2 * math.Pi * j / segments),
       center + radius * Complex.exp(i * 2 * math.Pi * (j + 1) / segments)
     ))
-    drawVertices(vertices.toList, color, if (fill) "fill" else "line")
+    drawVertices(vertices.toList, color, lineWidth)
   }
 
   def drawEllipse(center: Complex, xRadius: Double, yRadius: Double, rotation: Double = 0, color: Vec4 = Vec4(1,1,1,1),
-                  segments: Int = 20, fill: Boolean = true): Unit = {
+                  segments: Int = 20, lineWidth: Int = 0): Unit = {
     val vertices = (for (j <- 0 to segments) yield
       center + (xRadius * math.cos(j * 2 * math.Pi / segments) + Complex.i * (
         yRadius * math.sin(j * 2 * math.Pi / segments)
         )) * Complex.rotation(rotation)).toVector
-    drawVertices(vertices, color, if (fill) "fill" else "line")
+    drawVertices(vertices, color, lineWidth)
   }
 
-  def drawLine(vertices: Seq[Complex], color: Vec4 = Vec4(1,1,1,1), lineWidth: Int = 5): Unit = ???
+  def drawLine(vertices: Seq[Complex], color: Vec4 = Vec4(1,1,1,1), lineWidth: Int = 2): Unit = ???
 
 
-  def drawVertices(vertices: Seq[Complex], color: Vec4, mode: String = "fill"): Unit = {
+  def drawVertices(vertices: Seq[Complex], color: Vec4, lineWidth: Int = 0): Unit = {
 
 
     // we use the program created to draw vertices
@@ -446,11 +448,13 @@ class Canvas(val canvas: html.Canvas, gl: WebGLRenderingContext) extends CustomC
     //      )
 
 
-    if (mode == "fill")
+    if (lineWidth == 0)
     // Draw the triangle
       gl.drawArrays(WebGLRenderingContext.TRIANGLES, 0, vertices.length)
-    else
+    else {
+      gl.lineWidth(lineWidth)
       gl.drawArrays(WebGLRenderingContext.LINE_LOOP, 0, vertices.length)
+    }
   }
 
   def drawTextureQuad(tex: html.Image, quad: Quad, topLeft: Complex, width: Double, height: Double): Unit = {

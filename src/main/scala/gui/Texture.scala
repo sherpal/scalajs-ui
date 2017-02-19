@@ -53,6 +53,8 @@ class Texture(n: String = "", p: Frame) extends LayeredRegion {
   def mode: DrawMode = _mode
   def setMode(mode: DrawMode = FillMode): Unit = _mode = mode
 
+  var lineWidth: Int = 2
+
   private var _rotation: Double = 0
   def rotation: Double = _rotation
   def setRotation(rotation: Double = 0): Unit = _rotation = rotation
@@ -114,7 +116,8 @@ class Texture(n: String = "", p: Frame) extends LayeredRegion {
 
         case _ =>
           if (isRectangle) {
-            Engine.painter.drawRectangle(Complex(left, top), width, height, fill = mode == FillMode)
+            Engine.painter.drawRectangle(Complex(left, top), width, height,
+              lineWidth = if (mode == FillMode) 0 else lineWidth)
           } else if (isDisk) {
             Engine.painter.drawDisk(center, radius)
           }

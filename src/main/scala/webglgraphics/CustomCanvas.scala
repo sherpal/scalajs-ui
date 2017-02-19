@@ -89,34 +89,49 @@ trait CustomCanvas {
    * Draws a rectangle of the given color.
    * The color is multiplied by the drawingColor property.
    *
-   * @param z      top left pixel of the rectangle area.
-   * @param width  width of the rectangle.
-   * @param height height of the rectangle.
-   * @param color  css color of the region to draw.
-   * @param fill   whether the region should be filled.
+   * @param z         top left pixel of the rectangle area.
+   * @param width     width of the rectangle.
+   * @param height    height of the rectangle.
+   * @param color     css color of the region to draw.
+   * @param lineWidth 0 if the region should be filled, otherwise line width.
    */
   def drawRectangle(z: Complex, width: Double, height: Double, color: Vec4 = Vec4(1.0, 1.0, 1.0, 1.0),
-    fill: Boolean = true): Unit
+                    lineWidth: Int = 0): Unit
 
   /**
    * Draw a circle of the given color.
    * The color is multiplied by the drawingColor property.
    *
-   * @param center   the center of the disk, in pixels.
-   * @param radius   the radius of the disk, in pixels.
-   * @param color    color of the region to draw in rgba, in [0,1].
-   * @param segments number of segments used to draw the circle. Meaningless for [[Canvas2D]].
-   * @param fill     whether the region should be filled.
+   * @param center    the center of the disk, in pixels.
+   * @param radius    the radius of the disk, in pixels.
+   * @param color     color of the region to draw in rgba, in [0,1].
+   * @param segments  number of segments used to draw the circle. Meaningless for [[Canvas2D]].
+   * @param lineWidth 0 if the region should be fill, otherwise the line width.
    */
   def drawDisk(center: Complex, radius: Double, color: Vec4 = Vec4(1,1,1,1),
-               segments: Int = 20, fill: Boolean = true): Unit
+               segments: Int = 20, lineWidth: Int = 0): Unit
 
+  /**
+   * Draw an ellipse of the given color.
+   * The color is multiplied by the drawingColor property.
+   *
+   * @param center    the center of the ellipse, in pixels.
+   * @param xRadius   the horizontal (when rotation = 0) radius of the ellipse, in pixels.
+   * @param yRadius   the vertical (when rotation = 0) radius of the ellipse, in pixels.
+   * @param rotation  the angle of rotation of the ellipse, in radians, anticlockwise.
+   * @param color     color of the region to draw in rgba, in [0,1].
+   * @param segments  number of segments used to draw the circle. Meaningless for [[Canvas2D]].
+   * @param lineWidth 0 if the region should be fill, otherwise the line width.
+   */
   def drawEllipse(center: Complex, xRadius: Double, yRadius: Double, rotation: Double = 0, color: Vec4 = Vec4(1,1,1,1),
-                  segments: Int = 20, fill: Boolean = true): Unit
+                  segments: Int = 20, lineWidth: Int = 0): Unit
 
-  def drawLine(vertices: Seq[Complex], color: Vec4 = Vec4(1,1,1,1), lineWidth: Int = 5): Unit
+  /**
+   * Draw a line between every two pairs of adjacent vertices.
+   */
+  def drawLine(vertices: Seq[Complex], color: Vec4 = Vec4(1,1,1,1), lineWidth: Int = 2): Unit
 
-  def drawVertices(vertices: Seq[Complex], color: Vec4, mode: String = "fill"): Unit
+  def drawVertices(vertices: Seq[Complex], color: Vec4, lineWidth: Int = 0): Unit
 
   def drawTextureQuad(tex: html.Image, quad: Quad, topLeft: Complex, width: Double, height: Double): Unit
 

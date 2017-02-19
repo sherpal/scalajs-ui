@@ -77,13 +77,13 @@ class Canvas2D(val canvas: html.Canvas, ctx: CanvasRenderingContext2D) extends C
   }
 
   def drawRectangle(z: Complex, width: Double, height: Double, color: Vec4 = Vec4(1.0, 1.0, 1.0, 1.0),
-                    fill: Boolean = true): Unit = {
-    if (fill) {
+                    lineWidth: Int = 0): Unit = {
+    if (lineWidth == 0) {
       ctx.fillStyle = (color * drawingColor).toCSSColor
       val (locX, locY) = changeCoordinates(z)
       ctx.fillRect(locX, locY, width, height)
     } else {
-      ctx.lineWidth = 2
+      ctx.lineWidth = lineWidth
       ctx.strokeStyle = (color * drawingColor).toCSSColor
       val (locX, locY) = changeCoordinates(z)
       ctx.beginPath()
@@ -93,45 +93,46 @@ class Canvas2D(val canvas: html.Canvas, ctx: CanvasRenderingContext2D) extends C
   }
 
   def drawDisk(center: Complex, radius: Double, color: Vec4 = Vec4(1,1,1,1),
-               segments: Int = 20, fill: Boolean = true): Unit = {
+               segments: Int = 20, lineWidth: Int = 0): Unit = {
     ctx.beginPath()
     val (locX, locY) = changeCoordinates(center)
     ctx.arc(locX, locY, radius, 0, 2 * math.Pi)
-    if (fill) {
+    if (lineWidth == 0) {
       ctx.fillStyle = (color * drawingColor).toCSSColor
       ctx.fill()
     } else {
+      ctx.lineWidth = lineWidth
       ctx.strokeStyle = (color * drawingColor).toCSSColor
       ctx.stroke()
     }
   }
 
   def drawEllipse(center: Complex, xRadius: Double, yRadius: Double, rotation: Double = 0, color: Vec4 = Vec4(1,1,1,1),
-                  segments: Int = 20, fill: Boolean = true): Unit = {
+                  segments: Int = 20, lineWidth: Int = 2): Unit = {
     val vertices = (for (j <- 0 to segments) yield
       center + (xRadius * math.cos(j * 2 * math.Pi / segments) + Complex.i * (
         yRadius * math.sin(j * 2 * math.Pi / segments)
         )) * Complex.rotation(rotation)).toVector
-    drawVertices(vertices, color, if (fill) "fill" else "line")
+    drawVertices(vertices, color, lineWidth)
   }
 
   def drawLine(vertices: Seq[Complex], color: Vec4 = Vec4(1,1,1,1), lineWidth: Int = 2): Unit = {
     ctx.lineWidth = lineWidth
-    drawVertices(vertices, color, "line")
+    drawVertices(vertices, color, lineWidth)
   }
 
-  def drawVertices(vertices: Seq[Complex], color: Vec4, mode: String = "fill"): Unit =
+  def drawVertices(vertices: Seq[Complex], color: Vec4, lineWidth: Int = 0): Unit =
     if (vertices.nonEmpty && vertices.tail.nonEmpty){
     val canvasSpaceVertices = vertices.map(changeCoordinates)
     ctx.beginPath()
     ctx.moveTo(canvasSpaceVertices.head._1, canvasSpaceVertices.head._2)
     canvasSpaceVertices.tail.foreach({case (x, y) => ctx.lineTo(x, y)})
-    if (mode == "fill") {
+    if (lineWidth == 0) {
       ctx.closePath()
       ctx.fillStyle = (color * drawingColor).toCSSColor
       ctx.fill()
     } else {
-      ctx.lineWidth = 2
+      ctx.lineWidth = lineWidth
       ctx.strokeStyle = (color * drawingColor).toCSSColor
       ctx.stroke()
     }

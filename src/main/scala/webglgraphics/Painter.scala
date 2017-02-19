@@ -85,18 +85,21 @@ class Painter(val canvas: html.Canvas, val ctx: CanvasRenderingContext2D) {//val
     currentCanvases.foreach(_.withScissor(x, y, width, height)(body))
 
   def drawRectangle(z: Complex, width: Double, height: Double, color: Vec4 = Vec4(1.0, 1.0, 1.0, 1.0),
-                    fill: Boolean = true): Unit =
-    currentCanvases.foreach(_.drawRectangle(z, width, height, color, fill))
+                    lineWidth: Int = 0): Unit =
+    currentCanvases.foreach(_.drawRectangle(z, width, height, color, lineWidth))
 
-  def drawLine(vertices: Seq[Complex], color: Vec4 = Vec4(1,1,1,1), lineWidth: Int = 5): Unit =
+  def drawLine(vertices: Seq[Complex], color: Vec4 = Vec4(1,1,1,1), lineWidth: Int = 2): Unit =
     currentCanvases.foreach(_.drawLine(vertices, color, lineWidth))
+
+  def drawVertices(vertices: Seq[Complex], color: Vec4 = Vec4(1,1,1,1), lineWidth: Int = 0): Unit =
+    currentCanvases.foreach(_.drawVertices(vertices, color, lineWidth))
 
   def drawDisk(center: Complex, radius: Double, color: Vec4 = Vec4(1,1,1,1), segments: Int = 20): Unit =
     currentCanvases.foreach(_.drawDisk(center, radius, color, segments))
 
   def drawEllipse(center: Complex, xRadius: Double, yRadius: Double, rotation: Double = 0, color: Vec4 = Vec4(1,1,1,1),
-                  segments: Int = 20, fill: Boolean = true): Unit =
-    currentCanvases.foreach(_.drawEllipse(center, xRadius, yRadius, rotation, color, segments, fill))
+                  segments: Int = 20, lineWidth: Int = 0): Unit =
+    currentCanvases.foreach(_.drawEllipse(center, xRadius, yRadius, rotation, color, segments, lineWidth))
 
 
   def drawTextureQuad(tex: HTMLImageElement, quad: Quad, topLeft: Complex, width: Double, height: Double): Unit =
