@@ -33,7 +33,7 @@ trait FontInstance extends UIObject {
   // encodes whether the text has changed and position have to be computed again.
   protected var _textHasChanged: Boolean = true
 
-  private var _font: String = "Quicksand"
+  private var _font: String = "Arial"
   private val defaultFontSize = 20
   private var _size: Int = defaultFontSize
 

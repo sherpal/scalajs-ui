@@ -66,11 +66,11 @@ object DebugWindow extends Frame("DebugWindow", Some(UIParent)) {
   bg.setVertexColor(1,0,0,0.5)
 
 
-  private val scrollFrame = new ScrollFrame("", Some(this))
+  private val scrollFrame = new ScrollFrame(this)
   scrollFrame.setPoint(BottomLeft)
   scrollFrame.setSize(270)
 
-  private object ScrollChild extends Frame("", Some(this)) {
+  private object ScrollChild extends Frame(this) {
     setSize(scrollFrame.width - 1, 15)
     private val topFS = createFontString()
     topFS.setSize(scrollFrame.width - 10, 30)
@@ -101,7 +101,7 @@ object DebugWindow extends Frame("DebugWindow", Some(UIParent)) {
     )
   }
 
-  private object ScrollBar extends Slider("", Some(this)) {
+  private object ScrollBar extends Slider(this) {
     private val outer = DebugWindow.this
     setPoint(TopRight, outer, TopRight, 0, -30)
     setPoint(BottomRight)

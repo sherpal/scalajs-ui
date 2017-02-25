@@ -233,7 +233,7 @@ class EditBox(n: String = "", parent: Option[Frame] = Some(UIParent)) extends Fr
    */
   def delChar(): Unit = {
     val (before, after) = text.splitAt(cursorPosition - 1)
-    setText(before + after.tail)
+    setText(before + (if (after.isEmpty) "" else after.tail))
   }
 
   /// Adding text

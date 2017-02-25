@@ -389,6 +389,7 @@ class Frame(n: String = "", par: Option[Frame] = None) extends ScriptObject with
     case Some(parent) =>
       setParent(parent)
       setFrameStrata(parent.frameStrata)
+      setFrameLevel(parent.frameLevel)
     case _ =>
       setFrameStrata(frameStrata)
   }

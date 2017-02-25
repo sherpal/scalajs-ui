@@ -111,7 +111,7 @@ class Painter(val canvas: html.Canvas, val ctx: CanvasRenderingContext2D) {//val
   def drawCanvas(canvas: HTMLCanvasElement, topLeft: Complex, width: Double, height: Double): Unit =
     currentCanvases.foreach(_.drawCanvas(canvas, topLeft, width, height))
 
-  def drawTexture(tex: HTMLImageElement, topLeft: Complex, width: Double, height: Double): Unit =
+  def drawTexture(tex: html.Image, topLeft: Complex, width: Double, height: Double): Unit =
     currentCanvases.foreach(_.drawTexture(tex, topLeft, width, height))
 
 

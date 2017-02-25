@@ -29,7 +29,7 @@ package gui
 
 import complex.Complex
 import gameengine.Engine
-import webglgraphics.Canvas2D
+import webglgraphics.{Canvas2D, Vec4}
 
 
 class Button(n: String = "", par: Option[Frame] = Some(UIParent)) extends Frame(n, par) with Focusable with Textable {
@@ -218,7 +218,7 @@ object Button {
                   Engine.painter.drawRectangle(-normalTex.width / 2 + (normalTex.height / 2 - 2) * Complex.i,
                     normalTex.width, normalTex.height)
                 } else if (normalTex.isDisk) {
-                  Engine.painter.drawDisk(0, normalTex.radius)
+                  Engine.painter.drawDisk(-2, normalTex.radius)
                 }
             }
           })

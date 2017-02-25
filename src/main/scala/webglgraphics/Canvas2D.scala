@@ -145,7 +145,7 @@ class Canvas2D(val canvas: html.Canvas, ctx: CanvasRenderingContext2D) extends C
     ctx.drawImage(tex, sx, sy, sWidth, sHeight, dx, dy, width, height)
   }
 
-  def drawImage(image: HTMLImageElement, topLeft: Complex, width: Double, height: Double): Unit = {
+  def drawImage(image: html.Image, topLeft: Complex, width: Double, height: Double): Unit = {
     val (dx, dy) = changeCoordinates(topLeft)
     ctx.drawImage(image, dx, dy, width, height)
   }

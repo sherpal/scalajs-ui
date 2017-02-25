@@ -76,14 +76,16 @@ class Texture(n: String = "", p: Frame) extends LayeredRegion {
   def setTexture(file: String): Unit = {
     _canvas = None
     val image = dom.document.createElement("img").asInstanceOf[html.Image]
+    image.onload = (_: Event) => {
+      setTexture(Some(image))
+    }
     image.src = file
-    image.onload = (_: Event) => setTexture(Some(image))
   }
   def setTexture(canvas: html.Canvas): Unit = {
     _canvas = None
     val image = dom.document.createElement("img").asInstanceOf[html.Image]
-    image.src = canvas.toDataURL("image.png")
     image.onload = (_: Event) => setTexture(Some(image))
+    image.src = canvas.toDataURL("image.png")
   }
   def setTexture(canvas: CustomCanvas): Unit = {
     _canvas = Some(canvas)
