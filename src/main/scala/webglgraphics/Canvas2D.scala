@@ -31,7 +31,7 @@ import matrix.Matrix
 import complex.Complex
 import org.scalajs.dom
 import org.scalajs.dom.html
-import org.scalajs.dom.raw.{CanvasRenderingContext2D, HTMLImageElement}
+import org.scalajs.dom.raw.CanvasRenderingContext2D
 
 
 /**
@@ -54,7 +54,7 @@ class Canvas2D(val canvas: html.Canvas, ctx: CanvasRenderingContext2D) extends C
   def this() = this(dom.document.createElement("canvas").asInstanceOf[html.Canvas])
 
 
-  private def changeCoordinates(z: Complex): (Double, Double) = (z.re + canvas.width / 2, canvas.height / 2 - z.im)
+  def changeCoordinates(z: Complex): (Double, Double) = (z.re + canvas.width / 2, canvas.height / 2 - z.im)
 
   /**
    * Sets a rectangle area that restrain the drawing area and apply body instructions.

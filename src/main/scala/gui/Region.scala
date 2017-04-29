@@ -726,5 +726,9 @@ trait Region extends ParentedObject {
 }
 
 
-
+object Region {
+  def computeAllRegionPoints(): Unit = {
+    UIParent.children.foreach(_.makeActualPoints())
+  }
+}
 

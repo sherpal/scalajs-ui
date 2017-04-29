@@ -165,10 +165,15 @@ object ScriptObject {
     ScriptKind.OnLeave -> mutable.Set(), ScriptKind.OnLoseFocus -> mutable.Set(),
     ScriptKind.OnMinMaxValuesChanged -> mutable.Set(), ScriptKind.OnMouseMoved -> mutable.Set(),
     ScriptKind.OnMouseReleased -> mutable.Set(), ScriptKind.OnScrollRangeChanged -> mutable.Set(),
-    ScriptKind.OnShow -> mutable.Set(), ScriptKind.OnUpdate -> mutable.Set(),
+    ScriptKind.OnShow -> mutable.Set(), ScriptKind.OnUIParentResize -> mutable.Set(),
+    ScriptKind.OnUpdate -> mutable.Set(),
     ScriptKind.OnValueChanged -> mutable.Set(), ScriptKind.OnVerticalScroll -> mutable.Set(),
     ScriptKind.OnWheelMoved -> mutable.Set(), ScriptKind.OnWinFocus -> mutable.Set()
   )
+
+  def firesScript[ScriptObjectType, R](kind: ScriptKind { type Handler = (ScriptObjectType) => R })
+                                      (): Unit =
+    objectsWithScriptByKind(kind).foreach(_.fires[ScriptObjectType, R](kind)())
 
   /** Fires the script of every ScriptObject that registered it. */
   def firesScript[ScriptObjectType, T, R](kind: ScriptKind { type Handler = (ScriptObjectType, T) => R })
@@ -361,6 +366,15 @@ object ScriptKind {
    * remark: this may happen if the parent frame becomes visible
    */
   val OnShow: ScriptKind {type Handler = (Region) => Unit} = new ScriptKind {
+    type Handler = (Region) => Unit
+  }
+
+  /**
+   * - OnUIParentResize
+   * arguments: Region
+   * trigger: when the UIParent is resized.
+   */
+  val OnUIParentResize: ScriptKind {type Handler = (Region) => Unit} = new ScriptKind {
     type Handler = (Region) => Unit
   }
 

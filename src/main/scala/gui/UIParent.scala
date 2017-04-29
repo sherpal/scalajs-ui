@@ -35,12 +35,16 @@ object UIParent extends Frame("UIParent") {
   setFrameStrata(Below)
   setTopLevel()
 
-  _actualPoints = List(
-    (-width / 2, height / 2),
-    (width / 2, height / 2),
-    (-width / 2, -height / 2),
-    (width / 2, height / 2)
-  )
+
+  private def resetActualPoints(): Unit = {
+    _actualPoints = List(
+      (-width / 2, height / 2),
+      (width / 2, height / 2),
+      (-width / 2, -height / 2),
+      (width / 2, height / 2)
+    )
+  }
+  resetActualPoints()
 
   override def makeActualPoints(): Boolean = true
 
@@ -55,4 +59,16 @@ object UIParent extends Frame("UIParent") {
     case Bottom => ((left + right) / 2, bottom)
     case BottomRight => (right, bottom)
   })
+
+  def resize(width: Double, height: Double): Unit = {
+    setWidth(width)
+    setHeight(height)
+    resetActualPoints()
+    Region.computeAllRegionPoints()
+    ScriptObject.firesScript[Region, Unit](ScriptKind.OnUIParentResize)()
+  }
+
+  def resize(): Unit = {
+    resize(Engine.painter.canvas.width, Engine.painter.canvas.height)
+  }
 }

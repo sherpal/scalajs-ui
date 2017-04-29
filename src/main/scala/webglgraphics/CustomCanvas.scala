@@ -80,6 +80,16 @@ trait CustomCanvas {
     try body finally _drawingColor = previousColor
   }
 
+  def drawHelpGrid(): Unit = {
+    withColor(Vec4(1,1,1,1)) {
+      drawRectangle(Complex(-width / 2, height / 2), 20, 20)
+      drawRectangle(Complex(-10,10), 20, 20)
+      drawRectangle(Complex(-width / 2, -height / 2 + 20), 20, 20)
+      drawRectangle(Complex(width / 2 - 20, height / 2), 20, 20)
+      drawRectangle(Complex(width / 2 - 20, -height / 2 + 20), 20, 20)
+    }
+  }
+
   /**
    * Executes body with scissor set to rectangle of bottom left corner x+iy.
    */

@@ -64,8 +64,8 @@ class Tooltip(n: String, par: Option[Frame]) extends Frame(n, par) {
       fs.setPoint(AnchorPoint(TopLeft, this, TopLeft))
       fs.setPoint(AnchorPoint(TopRight, this, TopRight))
     } else {
-      fs.setPoint(AnchorPoint(TopLeft, lines.head._1, BottomLeft))
-      fs.setPoint(AnchorPoint(TopRight, lines.head._1, BottomRight))
+      fs.setPoint(AnchorPoint(TopLeft, lines.last._1, BottomLeft))
+      fs.setPoint(AnchorPoint(TopRight, lines.last._1, BottomRight))
     }
 
     fs.setHeight(size)
@@ -106,6 +106,7 @@ class Tooltip(n: String, par: Option[Frame]) extends Frame(n, par) {
     val left = addLine(textLeft, redLeft, greenLeft, blueLeft, size = sizeLeft)
 
     val fs = usableFontString()
+    fs.show()
     fs.clearAllPoints()
     fs.setPoint(AnchorPoint(Left, left, Left))
     fs.setPoint(AnchorPoint(Right, left, Right))
@@ -113,8 +114,10 @@ class Tooltip(n: String, par: Option[Frame]) extends Frame(n, par) {
     fs.setJustifyH(JustifyRight)
     fs.setHeight(sizeRight)
     fs.setHeight(fs.totalHeight())
+    fs.setTextColor(redRight, greenRight, blueRight)
+    fs.setFontSize(sizeRight)
 
-    lines = lines :+ (left, Some(fs))
+    lines = lines.dropRight(1) :+ (left, Some(fs))
 
     if (_autoAdjustHeight) adjustHeight()
   }

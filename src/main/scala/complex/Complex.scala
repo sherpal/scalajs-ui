@@ -39,9 +39,9 @@ case class Complex(re: Double, im: Double) {
 
   def arg: Double = atan2(im, re) // arg in (-pi, pi)
 
-  def unary_- : Complex = new Complex(-re, -im)
+  def unary_- : Complex = Complex(-re, -im)
 
-  def unary_~ : Complex = new Complex(re, -im)
+  def unary_~ : Complex = Complex(re, -im)
 
   def unary_! : Double = modulus
 
@@ -56,7 +56,8 @@ case class Complex(re: Double, im: Double) {
     case Complex.i => "1 im"
     case Complex(r, 0) => r.toString
     case Complex(0, i) => i.toString + " im"
-    case Complex(r, i) => r.toString + " + " + i.toString + " im"
+    case Complex(r, i) if i >= 0 => r.toString + " + " + i.toString + " im"
+    case Complex(r, i) => r.toString + " - " + math.abs(i).toString + " im"
   }
 }
 

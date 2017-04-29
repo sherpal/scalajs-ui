@@ -189,6 +189,10 @@ object DebugWindow extends Frame("DebugWindow", Some(UIParent)) {
     if (Frame.topMouseFrame != null) "Top frame: " + Frame.topMouseFrame.toString else "Top frame:"
   })
 
+  ScrollChild.addData((_) => {
+    "Computation time: " + Engine.computationTime + "ms"
+  })
+
 
   /**
    * Adds a line of data to display in the DebugWindow.

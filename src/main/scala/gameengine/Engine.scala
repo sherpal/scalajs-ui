@@ -42,6 +42,8 @@ object Engine {
   // this is the canvas the game draws onto
   // the id of the Html canvas element must be "canvas"
   private val canvas: html.Canvas = dom.document.getElementById("canvas").asInstanceOf[html.Canvas]
+  canvas.height = dom.window.innerHeight.toInt - 10
+  canvas.width = dom.window.innerWidth.toInt - 10
 
   //private val gl: WebGLRenderingContext = canvas.getContext("webgl").asInstanceOf[WebGLRenderingContext]
   private val ctx: CanvasRenderingContext2D = canvas.getContext("2d").asInstanceOf[CanvasRenderingContext2D]
@@ -77,6 +79,8 @@ object Engine {
     _gameState.keyReleased(event.key)
     downKeys -= event.key
   })
+
+
 
   /// Mouse Event
 
@@ -119,13 +123,12 @@ object Engine {
   /// focus lost and received callbacks
 
   canvas.addEventListener[dom.FocusEvent]("focusout", (_: dom.FocusEvent) => {
-    println("focus lost :(")
     downKeys.clear()
     downMouse.clear()
   })
 
   canvas.addEventListener[dom.FocusEvent]("focusin", (_: dom.FocusEvent) => {
-    println("focus received :)")
+    // things to do?
   })
 
   private var _computationTime: Double = 0
